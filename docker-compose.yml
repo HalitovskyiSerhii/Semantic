@@ -5,10 +5,18 @@ services:
       context: ./Nginx
       args:
         - HOST=${HOST}
-        - REST_NAME=rest
+        - REST_NAME=api
         - ES_NAME=elastic
     ports:
       - "80:80"
       - "443:443"
     restart: on-failure
-    command: "nginx -g 'daemon off;'"
+    volumes:
+      - nginx-conf:/etc/nginx/conf.d
+      - cert:/etc/letsencrypt
+      # - cert-www:/var/www/certbot
+
+volumes:
+  nginx-conf:
+  # cert-www:
+  cert:   
