@@ -1,6 +1,6 @@
 FROM node:13.12.0-alpine as build
 WORKDIR /app
-COPY ../Semantic-Front .
+COPY ./Semantic-Front .
 RUN yarn
 RUN yarn build
 
