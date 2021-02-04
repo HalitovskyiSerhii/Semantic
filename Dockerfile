@@ -1,4 +1,4 @@
-FROM node:13.12.0-alpine as build
+FROM node:13.12.0-alpine as builder
 WORKDIR /app
 COPY ./Semantic-Front .
 RUN yarn
@@ -8,7 +8,7 @@ FROM nginx
 ARG HOST
 ARG REST_NAME
 ARG ES_NAME
-COPY --from=build /app/build /var/www/$HOST/html;
+COPY --from=0 /app/build /var/www/$HOST/html
 RUN rm -f /etc/nginx/conf.d/default*
 COPY nginx.conf /tmp/nginx.conf
 COPY uwsgi_params /etc/nginx/conf.d/uwsgi_params
@@ -21,4 +21,4 @@ ENV DOMAIN=$HOST
 CMD certbot run --nginx --register-unsafely-without-email --force-renewal --post-hook "nginx -t -c /etc/nginx/nginx.conf" --agree-tos --redirect -d $DOMAIN -d www.$DOMAIN \
 	&& nginx -s stop \
 	&& nginx -g 'daemon off;'
-
+#CMD nginx -g 'daemon off;'
