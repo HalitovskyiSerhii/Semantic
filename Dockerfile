@@ -18,7 +18,6 @@ RUN apt install certbot -y
 RUN apt install python3-certbot -y
 RUN apt install python-certbot-nginx -y
 ENV DOMAIN=$HOST
-CMD certbot run --nginx --register-unsafely-without-email --force-renewal --post-hook "nginx -t -c /etc/nginx/nginx.conf" --agree-tos --redirect -d $DOMAIN -d www.$DOMAIN \
-	&& nginx -s stop \
-	&& nginx -g 'daemon off;'
+CMD (certbot run --nginx --register-unsafely-without-email --force-renewal --post-hook "nginx -t -c /etc/nginx/nginx.conf" --agree-tos --redirect -d $DOMAIN -d www.$DOMAIN \
+	&& nginx -s reload) & nginx -g 'daemon off;'
 #CMD nginx -g 'daemon off;'
