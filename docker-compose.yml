@@ -1,22 +1,63 @@
 version: '3.7'
 services:
   web-server:
+    container_name: web
+    env_file:
+      - .env
     build:
-      context: ./Nginx
+      context: .
       args:
         - HOST=${HOST}
-        - REST_NAME=api
-        - ES_NAME=elastic
+        - REST_NAME=api:300
+        - ES_NAME=elastic:9200
     ports:
       - "80:80"
       - "443:443"
     restart: on-failure
     volumes:
-      - nginx-conf:/etc/nginx/conf.d
       - cert:/etc/letsencrypt
-      # - cert-www:/var/www/certbot
+    networks:
+      - main
+    depends_on:
+      - api
+      - elastic
+
+  api:
+    container_name: api
+    env_file:
+      - ./Semantic-Back/.env
+    build:
+      context: ./Semantic-Back
+    ports:
+      - "300:300"
+    restart: on-failure
+    networks:
+      - main
+    depends_on:
+      - elastic
+    links:
+      - elastic
+
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: elastic
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - main
 
 volumes:
-  nginx-conf:
-  # cert-www:
-  cert:   
+  cert:
+  esdata:
+networks:
+  main:
