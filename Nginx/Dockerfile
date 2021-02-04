@@ -1,7 +1,14 @@
+FROM node:13.12.0-alpine as build
+WORKDIR /app
+COPY ../Semantic-Front .
+RUN yarn
+RUN yarn build
+
 FROM nginx
 ARG HOST
 ARG REST_NAME
 ARG ES_NAME
+COPY --from=build /app/build /var/www/$HOST/html;
 RUN rm -f /etc/nginx/conf.d/default*
 COPY nginx.conf /tmp/nginx.conf
 COPY uwsgi_params /etc/nginx/conf.d/uwsgi_params
