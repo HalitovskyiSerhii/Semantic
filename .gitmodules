@@ -1,0 +1,6 @@
+[submodule "Semantic-Front"]
+	path = Semantic-Front
+	url = https://github.com/HalitovskyiSerhii/Semantic-Front
+[submodule "Semantic-Back"]
+	path = Semantic-Back
+	url = https://github.com/HalitovskyiSerhii/Semantic-Back
